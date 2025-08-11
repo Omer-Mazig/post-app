@@ -1,4 +1,5 @@
 import { RootLayout } from "@/components/layout/root-layout";
+import { PostDetailsPage } from "@/features/posts/pages/post-details-page";
 import { PostsFeedPage } from "@/features/posts/pages/posts-feed-page";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
       {
         path: "/feed",
         element: <PostsFeedPage />,
+      },
+      {
+        path: "/posts/:id",
+        element: <PostDetailsPage />,
       },
     ],
   },

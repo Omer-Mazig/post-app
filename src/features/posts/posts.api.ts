@@ -31,6 +31,11 @@ const postsApi = {
     const parsed = PostSchema.parse(response.data);
     return parsed;
   },
+
+  getPostById: async (id: string): Promise<Post> => {
+    const response = await apiClient.get(`/posts/${id}`);
+    return PostSchema.parse(response.data);
+  },
 };
 
 export { postsApi };

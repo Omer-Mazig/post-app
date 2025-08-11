@@ -25,4 +25,12 @@ export const postsQueryOptionsFactory = {
       // Keep showing the previous results while the new search is loading
       placeholderData: keepPreviousData,
     }),
+
+  // ["posts", "detail", id]
+  detail: (id: string) =>
+    queryOptions({
+      queryKey: [...postsQueryOptionsFactory.all().queryKey, "detail", id],
+      queryFn: () => postsApi.getPostById(id),
+      enabled: Boolean(id),
+    }),
 };

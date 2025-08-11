@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { type Post } from "../posts.types";
 import {
   Card,
@@ -25,19 +26,24 @@ function truncateText(text: string, maxChars: number): string {
 export const PostPreview = ({ post, maxChars = 80 }: PostPreviewProps) => {
   const bodyPreview = truncateText(post.body, maxChars);
   return (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardHeader>
-        <CardTitle className="text-base sm:text-lg">{post.title}</CardTitle>
-        <CardDescription>Posted by User #{post.userId}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground whitespace-pre-line">
-          {bodyPreview}
-        </p>
-      </CardContent>
-      <CardFooter className="text-xs text-muted-foreground">
-        Post ID: {post.id}
-      </CardFooter>
-    </Card>
+    <Link
+      className="block"
+      to={`/posts/${post.id}`}
+    >
+      <Card className="hover:shadow-md transition-shadow">
+        <CardHeader>
+          <CardTitle className="text-base sm:text-lg">{post.title}</CardTitle>
+          <CardDescription>Posted by User #{post.userId}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground whitespace-pre-line">
+            {bodyPreview}
+          </p>
+        </CardContent>
+        <CardFooter className="text-xs text-muted-foreground">
+          Post ID: {post.id}
+        </CardFooter>
+      </Card>
+    </Link>
   );
 };
