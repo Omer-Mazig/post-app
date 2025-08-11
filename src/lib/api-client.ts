@@ -14,3 +14,17 @@ export const apiClient = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+// Global error logger for development
+if (import.meta.env.DEV) {
+  apiClient.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      // For development, log the error
+      if (import.meta.env.DEV) {
+        console.error("API Error:", error);
+      }
+      return Promise.reject(error);
+    }
+  );
+}
