@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { postsQueryOptionsFactory } from "../posts-query-options-factory";
 import { PostCommentsSection } from "../comments/components/post-comments-section";
+import { useAuth } from "@/components/providers/auth-provider";
+import { ConfirmDeleteDialogPost } from "../components/confirm-delete-dialog-post";
 
 const PostErrorCard = ({ onRetry }: { onRetry: () => void }) => (
   <div className="flex items-center justify-center h-[60vh]">
@@ -44,6 +46,7 @@ const PostSkeletonCard = () => (
 
 export const PostDetailsPage = () => {
   const { id = "" } = useParams();
+  const { user } = useAuth();
 
   const {
     data: post,
@@ -65,8 +68,34 @@ export const PostDetailsPage = () => {
       ) : post ? (
         <Card>
           <CardHeader>
-            <CardTitle className="text-xl sm:text-2xl">{post.title}</CardTitle>
-            <CardDescription>Posted by User #{post.userId}</CardDescription>
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <CardTitle className="text-xl sm:text-2xl">
+                  {post.title}
+                </CardTitle>
+                <CardDescription>Posted by User #{post.userId}</CardDescription>
+              </div>
+              {user?.id === post.userId && (
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                  >
+                    Edit
+                  </Button>
+                  <ConfirmDeleteDialogPost
+                    trigger={
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                      >
+                        Delete
+                      </Button>
+                    }
+                  />
+                </div>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             <p className="text-base whitespace-pre-line leading-7">
