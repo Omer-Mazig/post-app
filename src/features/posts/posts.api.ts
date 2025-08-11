@@ -15,6 +15,8 @@ const postsApi = {
       urlParams.set("q", searchQuery.trim());
     }
 
+    // DO NOT CATCH ERRORS HERE
+    // Let Tanstack handle the error
     const response = await apiClient.get(`/posts?${urlParams.toString()}`);
     const parsed = PostsPageSchema.parse(response.data);
 
@@ -33,6 +35,8 @@ const postsApi = {
   },
 
   getPostById: async (id: string): Promise<Post> => {
+    // DO NOT CATCH ERRORS HERE
+    // Let Tanstack handle the error
     const response = await apiClient.get(`/posts/${id}`);
     return PostSchema.parse(response.data);
   },

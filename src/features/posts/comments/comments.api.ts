@@ -11,10 +11,14 @@ const commentsApi = {
     const urlParams = new URLSearchParams();
     urlParams.set("cursor", String(Math.max(0, cursor)));
     urlParams.set("limit", String(pageSize));
+
+    // DO NOT CATCH ERRORS HERE
+    // Let Tanstack handle the error
     const response = await apiClient.get(
       `/posts/${postId}/comments?${urlParams.toString()}`
     );
     const parsed = CommentsPageSchema.parse(response.data);
+
     return {
       items: parsed.items,
       nextCursor: parsed.nextCursor,
