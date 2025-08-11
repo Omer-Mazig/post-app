@@ -1,6 +1,7 @@
 import * as React from "react";
 import { type Post } from "../posts.types";
 import { PostPreview } from "./post-preview";
+import { PostPreviewSkeleton } from "./post-preview-skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 
@@ -43,7 +44,9 @@ export const PostsList = ({
         ))}
         <div ref={sentinelRef} />
         {isFetchingMore && (
-          <div className="py-4 text-center text-sm">Loading…</div>
+          <div className="py-2">
+            <PostPreviewSkeleton />
+          </div>
         )}
         {hasNextPage === false && (
           <div className="py-4 text-center text-sm text-muted-foreground">

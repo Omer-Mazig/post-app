@@ -2,6 +2,7 @@ import * as React from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { postsApi } from "../posts.api";
 import { PostsList } from "../components/posts-list";
+import { PostsListSkeleton } from "../components/posts-list-skeleton";
 import { type Post } from "../posts.types";
 
 export const PostsFeedPage = () => {
@@ -25,8 +26,11 @@ export const PostsFeedPage = () => {
     [data]
   );
 
-  if (isError) return <div>Error</div>;
-  if (isLoading) return <div>Loading...</div>;
+  if (isError)
+    return (
+      <div className="p-4 text-sm text-destructive">Error loading posts</div>
+    );
+  if (isLoading) return <PostsListSkeleton />;
 
   return (
     <PostsList
