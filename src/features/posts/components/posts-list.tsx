@@ -1,14 +1,62 @@
+import * as React from "react";
 import { type Post } from "../posts.types";
 import { PostPreview } from "./post-preview";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 type PostsListProps = {
   posts: Post[];
+  onReachEnd?: () => void;
+  isFetchingMore?: boolean;
+  hasNextPage?: boolean;
 };
 
-export const PostsList = ({ posts }: PostsListProps) => {
+export const PostsList = ({
+  posts,
+  onReachEnd,
+  isFetchingMore,
+  hasNextPage,
+}: PostsListProps) => {
+  const viewportRef = React.useRef<HTMLDivElement | null>(null);
+  const sentinelRef = React.useRef<HTMLDivElement | null>(null);
+  const observerRef = React.useRef<IntersectionObserver | null>(null);
+
+  React.useEffect(() => {
+    const rootEl = viewportRef.current;
+    const targetEl = sentinelRef.current;
+    if (!rootEl || !targetEl || !onReachEnd) return;
+
+    // Clean up any previous observer
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+      observerRef.current = null;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          onReachEnd();
+        }
+      },
+      {
+        root: rootEl,
+        threshold: 0,
+        rootMargin: "200px 0px 200px 0px",
+      }
+    );
+    observer.observe(targetEl);
+    observerRef.current = observer;
+
+    return () => {
+      if (observerRef.current) observerRef.current.disconnect();
+      observerRef.current = null;
+    };
+  }, [onReachEnd, posts.length]);
+
   return (
-    <ScrollArea className="h-[80vh] pr-2">
+    <ScrollArea
+      className="h-[80vh] pr-2"
+      viewportRef={viewportRef}
+    >
       <div className="space-y-4">
         {posts.map((post) => (
           <PostPreview
@@ -16,6 +64,15 @@ export const PostsList = ({ posts }: PostsListProps) => {
             post={post}
           />
         ))}
+        <div ref={sentinelRef} />
+        {isFetchingMore && (
+          <div className="py-4 text-center text-sm">Loading…</div>
+        )}
+        {hasNextPage === false && (
+          <div className="py-4 text-center text-sm text-muted-foreground">
+            No more posts
+          </div>
+        )}
       </div>
     </ScrollArea>
   );
