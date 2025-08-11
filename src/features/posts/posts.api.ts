@@ -40,6 +40,12 @@ const postsApi = {
     const response = await apiClient.get(`/posts/${id}`);
     return PostSchema.parse(response.data);
   },
+
+  deletePost: async (id: string) => {
+    // DO NOT CATCH ERRORS HERE
+    // Let Tanstack handle the error
+    await apiClient.delete(`/posts/${id}`);
+  },
 };
 
 export { postsApi };

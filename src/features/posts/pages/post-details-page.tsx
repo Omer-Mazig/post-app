@@ -1,5 +1,6 @@
 //
-import { useParams } from "react-router-dom";
+import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
   Card,
@@ -16,6 +17,8 @@ import { postsQueryOptionsFactory } from "../posts-query-options-factory";
 import { PostCommentsSection } from "../comments/components/post-comments-section";
 import { useAuth } from "@/components/providers/auth-provider";
 import { ConfirmDeleteDialogPost } from "../components/confirm-delete-dialog-post";
+import { useDeletePost } from "../hooks/use-delete-post";
+import { Trash2 } from "lucide-react";
 
 const PostErrorCard = ({ onRetry }: { onRetry: () => void }) => (
   <div className="flex items-center justify-center h-[60vh]">
@@ -46,14 +49,23 @@ const PostSkeletonCard = () => (
 
 export const PostDetailsPage = () => {
   const { id = "" } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth();
-
+  const deletePost = useDeletePost();
+  const [isDeleteOpen, setIsDeleteOpen] = React.useState(false);
   const {
     data: post,
     isLoading: isLoadingPost,
     isError: isErrorPost,
     refetch: refetchPost,
   } = useQuery(postsQueryOptionsFactory.detail(id));
+
+  const handleDeletePost = async () => {
+    await deletePost.mutateAsync(id);
+    // Wait one microtask to ensure any observers re-render on the feed, then navigate
+    await Promise.resolve();
+    navigate("/");
+  };
 
   if (isErrorPost)
     return (
@@ -77,21 +89,21 @@ export const PostDetailsPage = () => {
               </div>
               {user?.id === post.userId && (
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                  >
-                    Edit
-                  </Button>
                   <ConfirmDeleteDialogPost
                     trigger={
                       <Button
-                        variant="destructive"
-                        size="sm"
+                        variant="ghost"
+                        size="icon"
                       >
-                        Delete
+                        <Trash2 className="w-4 h-4 text-red-500" />
                       </Button>
                     }
+                    open={isDeleteOpen}
+                    onOpenChange={setIsDeleteOpen}
+                    onConfirm={async () => {
+                      await handleDeletePost();
+                      setIsDeleteOpen(false);
+                    }}
                   />
                 </div>
               )}

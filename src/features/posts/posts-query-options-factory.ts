@@ -16,10 +16,11 @@ export const postsQueryOptionsFactory = {
     }),
 
   // ["posts", "list", searchQuery]
-  list: (searchQuery: string) =>
+  list: (searchQuery?: string) =>
     infiniteQueryOptions({
       queryKey: [...postsQueryOptionsFactory.lists().queryKey, searchQuery],
-      queryFn: ({ pageParam = 0 }) => postsApi.getPosts(pageParam, searchQuery),
+      queryFn: ({ pageParam = 0 }) =>
+        postsApi.getPosts(pageParam, searchQuery ?? ""),
       getNextPageParam: (lastPage) => lastPage.nextCursor,
       initialPageParam: 0,
       // Keep showing the previous results while the new search is loading

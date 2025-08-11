@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { type Post } from "../posts.types";
 import {
@@ -11,6 +12,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/providers/auth-provider";
 import { ConfirmDeleteDialogPost } from "./confirm-delete-dialog-post";
+import { useDeletePost } from "../hooks/use-delete-post";
+import { Trash2 } from "lucide-react";
 
 type PostPreviewProps = {
   post: Post;
@@ -30,6 +33,12 @@ export const PostPreview = ({ post, maxChars = 80 }: PostPreviewProps) => {
   const bodyPreview = truncateText(post.body, maxChars);
   const { user } = useAuth();
   const isOwner = user?.id === post.userId;
+  const deletePost = useDeletePost();
+  const [isDeleteOpen, setIsDeleteOpen] = React.useState(false);
+
+  const handleDeletePost = async () => {
+    await deletePost.mutateAsync(post.id);
+  };
 
   return (
     <Card className="hover:shadow-md transition-shadow">
@@ -43,21 +52,21 @@ export const PostPreview = ({ post, maxChars = 80 }: PostPreviewProps) => {
           </div>
           {isOwner && (
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-              >
-                Edit
-              </Button>
               <ConfirmDeleteDialogPost
                 trigger={
                   <Button
-                    variant="destructive"
-                    size="sm"
+                    variant="ghost"
+                    size="icon"
                   >
-                    Delete
+                    <Trash2 className="w-4 h-4 text-red-500" />
                   </Button>
                 }
+                open={isDeleteOpen}
+                onOpenChange={setIsDeleteOpen}
+                onConfirm={async () => {
+                  await handleDeletePost();
+                  setIsDeleteOpen(false);
+                }}
               />
             </div>
           )}
