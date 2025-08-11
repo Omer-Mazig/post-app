@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { postsApi } from "../posts.api";
 import { PostsList } from "../components/posts-list";
 import { PostsListSkeleton } from "../components/posts-list-skeleton";
@@ -14,6 +15,8 @@ export const PostsFeedPage = () => {
     isFetchingNextPage,
     isLoading,
     isError,
+    error,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ["posts"],
     queryFn: ({ pageParam = 1 }) => postsApi.getPosts(pageParam),
@@ -27,12 +30,27 @@ export const PostsFeedPage = () => {
     [data]
   );
 
-  if (isError)
+  // Show a toast when there is an error during fetching more, but keep already loaded posts visible
+  React.useEffect(() => {
+    if (isError && flatPosts.length > 0) {
+      const description = error instanceof Error ? error.message : undefined;
+      toast.error("Failed to load more posts", {
+        description,
+        action: {
+          label: "Retry",
+          onClick: () => fetchNextPage({ cancelRefetch: false }),
+        },
+      });
+    }
+  }, [isError, flatPosts.length, error, fetchNextPage]);
+
+  // Only show the full-screen error when there is no data yet
+  if (isError && flatPosts.length === 0)
     return (
       <ErrorState
         title="Failed to load posts"
         message="Please check your connection or try again."
-        onRetry={() => fetchNextPage({ cancelRefetch: false })}
+        onRetry={() => refetch({ cancelRefetch: false })}
         retryLabel="Retry"
       />
     );
