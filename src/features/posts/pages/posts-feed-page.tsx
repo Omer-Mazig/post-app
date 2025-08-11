@@ -3,6 +3,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { postsApi } from "../posts.api";
 import { PostsList } from "../components/posts-list";
 import { PostsListSkeleton } from "../components/posts-list-skeleton";
+import { ErrorState } from "../components/error-state";
 import { type Post } from "../posts.types";
 
 export const PostsFeedPage = () => {
@@ -28,7 +29,12 @@ export const PostsFeedPage = () => {
 
   if (isError)
     return (
-      <div className="p-4 text-sm text-destructive">Error loading posts</div>
+      <ErrorState
+        title="Failed to load posts"
+        message="Please check your connection or try again."
+        onRetry={() => fetchNextPage({ cancelRefetch: false })}
+        retryLabel="Retry"
+      />
     );
   if (isLoading) return <PostsListSkeleton />;
 
