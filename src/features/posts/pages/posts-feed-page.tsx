@@ -22,23 +22,12 @@ export const PostsFeedPage = () => {
     isError,
     error,
     refetch,
-  } = useInfiniteQuery(postsQueryOptionsFactory.list());
+  } = useInfiniteQuery(postsQueryOptionsFactory.list(searchQuery));
 
   const flatPosts: Post[] = React.useMemo(
     () => data?.pages.flatMap((p) => p.items) ?? [],
     [data]
   );
-
-  const filteredPosts: Post[] = React.useMemo(() => {
-    const raw = searchQuery.trim();
-    if (raw.length === 0) return flatPosts;
-    const q = raw.toLowerCase();
-    return flatPosts.filter(
-      (post) =>
-        post.title.toLowerCase().includes(q) ||
-        post.body.toLowerCase().includes(q)
-    );
-  }, [flatPosts, searchQuery]);
 
   // Show a toast when there is an error during fetching more, but keep already loaded posts visible
   React.useEffect(() => {
@@ -71,7 +60,7 @@ export const PostsFeedPage = () => {
       <AddPostForm />
       <PostsFilter />
       <PostsList
-        posts={filteredPosts}
+        posts={flatPosts}
         onReachEnd={() => {
           if (hasNextPage && !isFetchingNextPage) fetchNextPage();
         }}

@@ -4,12 +4,15 @@ import { type Post } from "./posts.types";
 
 const postsApi = {
   getPosts: async (
-    page: number
+    page: number,
+    searchQuery: string
   ): Promise<{
     items: Post[];
     nextCursor: number | undefined;
   }> => {
     const limit = 10;
+
+    console.log("searchQuery", searchQuery);
 
     const urlParams = new URLSearchParams();
     const start = (page - 1) * limit;
@@ -20,7 +23,9 @@ const postsApi = {
 
     // DO NOT CATCH ERRORS HERE
     // Let Tanstack handle the error
-    const response = await apiClient.get(`/posts?${urlParams.toString()}`);
+    const response = await apiClient.get(
+      `/posts?${urlParams.toString()}&q=${searchQuery}`
+    );
     const parsed = PostsSchema.parse(response.data);
 
     const items: Post[] = parsed;

@@ -12,13 +12,10 @@ export const postsQueryOptionsFactory = {
     }),
 
   // ["posts", "list", filters]
-  list: ({
-    sort = "newest",
-    tag = "all",
-  }: { sort?: string; tag?: string } = {}) =>
+  list: (searchQuery: string) =>
     infiniteQueryOptions({
-      queryKey: [...postsQueryOptionsFactory.lists().queryKey, sort, tag],
-      queryFn: ({ pageParam = 1 }) => postsApi.getPosts(pageParam),
+      queryKey: [...postsQueryOptionsFactory.lists().queryKey, searchQuery],
+      queryFn: ({ pageParam = 1 }) => postsApi.getPosts(pageParam, searchQuery),
       getNextPageParam: (lastPage, _pages, lastPageParam) =>
         lastPage.items.length < 10 ? undefined : lastPageParam + 1,
       initialPageParam: 1,
