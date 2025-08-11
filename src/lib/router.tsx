@@ -1,4 +1,5 @@
 import { RootLayout } from "@/components/layout/root-layout";
+import { PostsFeedPage } from "@/features/posts/pages/posts-feed-page";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
 /**
@@ -24,7 +25,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/feed",
-        element: <div>Feed</div>,
+        element: <PostsFeedPage />,
       },
     ],
   },
