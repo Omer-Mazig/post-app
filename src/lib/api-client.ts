@@ -18,6 +18,13 @@ export const apiClient = axios.create({
   },
 });
 
+// Dummy delay for development
+if (import.meta.env.DEV) {
+  apiClient.interceptors.request.use((config) => {
+    return new Promise((resolve) => setTimeout(() => resolve(config), 1000));
+  });
+}
+
 // Global error logger for development
 if (import.meta.env.DEV) {
   apiClient.interceptors.response.use(
