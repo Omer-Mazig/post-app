@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useAuth } from "@/components/providers/auth-provider";
+import { Separator } from "@/components/ui/separator";
 
 export const PostsFeedPage = () => {
   const [searchParams] = useSearchParams();
@@ -74,6 +75,8 @@ export const PostsFeedPage = () => {
         <PostsFilter />
         <Button onClick={() => setIsAddPostOpen(true)}>New Post</Button>
       </div>
+
+      <Separator />
 
       {user && (
         <Dialog

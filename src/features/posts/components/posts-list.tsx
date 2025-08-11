@@ -32,7 +32,7 @@ export const PostsList = ({
 
   return (
     <ScrollArea
-      className="h-[80vh] pr-2 mt-8"
+      className="h-[65vh] pr-2 mt-8"
       viewportRef={viewportRef}
     >
       <div className="space-y-4">
