@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useAddPost } from "../hooks/use-add-post";
 import { toast } from "sonner";
+import { useAuth } from "@/components/providers/auth-provider";
 
 const addPostFormSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters."),
@@ -31,12 +32,13 @@ type AddPostFormProps = {
 
 export const AddPostForm = ({ onSuccess, onCancel }: AddPostFormProps) => {
   const addPost = useAddPost();
+  const { user } = useAuth();
   const form = useForm<AddPostFormValues>({
     resolver: zodResolver(addPostFormSchema),
     defaultValues: {
       title: "",
       body: "",
-      userId: "1", // TODO: get user id from auth context
+      userId: user!.id, // i know there is a user, so i can safely access the id
     },
   });
 

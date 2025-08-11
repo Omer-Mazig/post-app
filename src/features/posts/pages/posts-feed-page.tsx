@@ -17,11 +17,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useAuth } from "@/components/providers/auth-provider";
 
 export const PostsFeedPage = () => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("q") ?? "";
   const [isAddPostOpen, setIsAddPostOpen] = React.useState(false);
+  const { user } = useAuth();
   const {
     data,
     fetchNextPage,
@@ -72,23 +74,26 @@ export const PostsFeedPage = () => {
         <PostsFilter />
         <Button onClick={() => setIsAddPostOpen(true)}>New Post</Button>
       </div>
-      <Dialog
-        open={isAddPostOpen}
-        onOpenChange={setIsAddPostOpen}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add new post</DialogTitle>
-            <DialogDescription>
-              Share your thoughts with the community.
-            </DialogDescription>
-          </DialogHeader>
-          <AddPostForm
-            onSuccess={() => setIsAddPostOpen(false)}
-            onCancel={() => setIsAddPostOpen(false)}
-          />
-        </DialogContent>
-      </Dialog>
+
+      {user && (
+        <Dialog
+          open={isAddPostOpen}
+          onOpenChange={setIsAddPostOpen}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add new post</DialogTitle>
+              <DialogDescription>
+                Share your thoughts with the community.
+              </DialogDescription>
+            </DialogHeader>
+            <AddPostForm
+              onSuccess={() => setIsAddPostOpen(false)}
+              onCancel={() => setIsAddPostOpen(false)}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
       <PostsList
         posts={flatPosts}
         onReachEnd={() => {
