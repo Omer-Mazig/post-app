@@ -53,6 +53,7 @@ export const PostsFeedPage = () => {
         retryLabel="Retry"
       />
     );
+
   // Only show skeleton on initial load with no data
   if (isLoading && !data) return <PostsListSkeleton />;
 
