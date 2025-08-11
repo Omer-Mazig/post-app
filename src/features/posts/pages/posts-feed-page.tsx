@@ -8,6 +8,7 @@ import { type Post } from "../posts.types";
 import { useSearchParams } from "react-router-dom";
 import { PostsFilter } from "../components/posts-filter";
 import { postsQueryOptionsFactory } from "../posts-query-options-factory";
+import { AddPostForm } from "../components/add-post-form";
 
 export const PostsFeedPage = () => {
   const [searchParams] = useSearchParams();
@@ -67,6 +68,7 @@ export const PostsFeedPage = () => {
 
   return (
     <div className="space-y-4">
+      <AddPostForm />
       <PostsFilter />
       <PostsList
         posts={filteredPosts}

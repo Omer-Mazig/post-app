@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 const PostSchema = z.object({
-  id: z.number(),
-  userId: z.number(),
+  id: z.string(),
+  userId: z.string(),
   title: z.string(),
   body: z.string(),
 });

@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/api-client";
-import { PostsSchema } from "./posts.schemas";
+import { PostSchema, PostsSchema } from "./posts.schemas";
 import { type Post } from "./posts.types";
 
 const postsApi = {
@@ -34,6 +34,14 @@ const postsApi = {
       items,
       nextCursor,
     };
+  },
+
+  addPost: async (post: Omit<Post, "id">) => {
+    // DO NOT CATCH ERRORS HERE
+    // Let Tanstack handle the error
+    const response = await apiClient.post("/posts", post);
+    const parsed = PostSchema.parse(response.data);
+    return parsed;
   },
 };
 

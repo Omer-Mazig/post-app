@@ -8,11 +8,8 @@ import axios from "axios";
 
 const baseURL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
-// We are using json-server as a mock API server
-// So we cannot use the /api prefix
-// Add: /api prefix to the baseURL if we decide to use a real API server
 export const apiClient = axios.create({
-  baseURL: `${baseURL}`,
+  baseURL: `${baseURL}/api`,
   headers: {
     "Content-Type": "application/json",
   },
