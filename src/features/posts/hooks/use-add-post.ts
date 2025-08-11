@@ -10,7 +10,9 @@ export const useAddPost = () => {
     onSuccess: async () => {
       // returning the awaited promise to make the mutation wait for the query to be invalidated.
       // this is making the isPending state to be true until the query is invalidated.
-      return await queryClient.invalidateQueries({ queryKey: ["posts"] });
+      return await queryClient.invalidateQueries({
+        queryKey: ["posts", "list"],
+      });
     },
   });
 };
