@@ -1,5 +1,5 @@
-import HomePage from "@/pages/home-page";
-import { createBrowserRouter } from "react-router-dom";
+import { RootLayout } from "@/components/layout/root-layout";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
 /**
  * Router
@@ -9,6 +9,23 @@ import { createBrowserRouter } from "react-router-dom";
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomePage />,
+    element: <RootLayout />,
+    children: [
+      {
+        // For now, redirect to /feed on root path
+        // If we decide to have a home page, we can change this to /
+        index: true,
+        element: (
+          <Navigate
+            to="/feed"
+            replace
+          />
+        ),
+      },
+      {
+        path: "/feed",
+        element: <div>Feed</div>,
+      },
+    ],
   },
 ]);
