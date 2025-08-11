@@ -14,20 +14,12 @@ import { useAuth } from "@/components/providers/auth-provider";
 import { ConfirmDeleteDialogPost } from "./confirm-delete-dialog-post";
 import { useDeletePost } from "../hooks/use-delete-post";
 import { Trash2 } from "lucide-react";
+import { truncateText } from "@/lib/utils";
 
 type PostPreviewProps = {
   post: Post;
   maxChars?: number;
 };
-
-function truncateText(text: string, maxChars: number): string {
-  if (text.length <= maxChars) return text;
-  const truncated = text.slice(0, maxChars).trim();
-  const lastSpaceIndex = truncated.lastIndexOf(" ");
-  const result =
-    lastSpaceIndex > 0 ? truncated.slice(0, lastSpaceIndex) : truncated;
-  return `${result}…`;
-}
 
 export const PostPreview = ({ post, maxChars = 80 }: PostPreviewProps) => {
   const bodyPreview = truncateText(post.body, maxChars);
