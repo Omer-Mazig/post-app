@@ -1,103 +1,61 @@
-# React + Shadcn + TanStack Query Starter
+## PostApp — Client
 
-A modern, feature-rich React starter template built with TypeScript, featuring Shadcn UI components, TanStack Query for data fetching, and a comprehensive set of development tools.
+A modern React client for a posts feed. This was built as a focused front‑end assignment to demonstrate pragmatic architecture, strong UX, and production‑minded patterns on a small scope. A lightweight local API is provided only to enable richer client features.
 
-## 🚀 Features
+### How to run (development)
 
-- ⚛️ **React 19** - The latest version of React
-- 🎨 **Shadcn UI** - A beautiful and customizable UI component library
-- 📡 **TanStack Query** - Powerful data synchronization for React
-- 🎯 **TypeScript** - Type safety and enhanced developer experience
-- 🎨 **Tailwind CSS** - Utility-first CSS framework
-- 🔄 **React Router** - Client-side routing
-- 🎬 **Vite** - Lightning fast build tool
-- 📝 **ESLint** - Code linting
-- 🌙 **Dark Mode** - Built-in dark mode support
-- 🎯 **Form Handling** - React Hook Form with Zod validation
+- **Requirements**: Node.js 20+ and npm 10+
+- **API server**: The client expects an API on `http://localhost:3000` by default. See the API/server instructions in `../server/README.md` and start it first.
 
-## 📦 Prerequisites
+Steps:
 
-- Node.js (v18 or higher)
-- npm or yarn or pnpm
+1. `cd client`
+2. `npm install`
+3. (Optional) create `.env` and set a custom API URL:
+   - `VITE_API_URL=http://localhost:3000`
+4. `npm run dev`
+5. Open the Vite URL printed in the terminal (typically `http://localhost:5173`).
 
-## 🚀 Getting Started
+Useful scripts:
 
-1. Clone the repository:
+- `npm run build`: Production build
+- `npm run preview`: Preview the production build locally
+- `npm run lint`: Lint the codebase
 
-```bash
-git clone [your-repo-url]
-cd react-shadcn-tanstack-query
-```
+### Purpose
 
-2. Install dependencies:
+Deliver a clean, responsive posts feed that feels “real” to use: fast initial load, infinite scrolling, optimistic updates where it matters, sensible error states, and a consistent, accessible UI. The API is intentionally minimal and in‑memory; the focus is the client experience and front‑end engineering choices.
 
-```bash
-npm install
-# or
-yarn install
-# or
-pnpm install
-```
+### Features
 
-3. Start the development server:
+- **Posts feed with infinite scroll**: Efficient pagination powered by TanStack Query and an intersection observer.
+- **Search with URL sync**: Debounced search updates the `?q=` param for shareable/filterable URLs.
+- **Create post**: Validated form (title/content) with success toasts and automated cache invalidation.
+- **Delete own post**: Detail page allows deleting your own post with a confirmation dialog and optimistic list update.
+- **Post details**: Dedicated page with content and metadata.
+- **Comments with pagination**: Comments section loads incrementally per post, keeping the UI responsive.
+- **Robust loading and error states**: Skeletons for perceived performance; toast errors for non‑blocking failures; clear retry actions when blocking.
+- **Theme toggle (light/dark/system)**: Persisted preference with system‑aware default, implemented at the root for consistent theming.
+- **Responsive, accessible UI**: Built with Radix primitives and sensible ARIA/keyboard defaults.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+### Technologies
 
-4. Open [http://localhost:5173](http://localhost:5173) in your browser
+- **React 19 + Vite 6 + TypeScript**: Fast DX, strict typing, modern React features.
+- **React Router 7**: App routing (`/feed`, `/posts/:id`) with simple redirects.
+- **TanStack Query 5**: Data fetching, caching, infinite queries, and a tuned retry policy.
+- **Axios**: HTTP client with a small dev‑time delay and centralized error logging.
+- **Zod**: Runtime validation of API responses for safer client code.
+- **React Hook Form**: Performant, well‑typed forms with Zod resolver.
+- **UI stack**: Tailwind CSS 4, Radix UI primitives, `lucide-react` icons, and `sonner` for toasts.
 
-## 📁 Project Structure
+### Architecture notes
 
-```
-├── src/
-│   ├── components/     # Reusable UI components
-│   ├── features/       # Feature-specific components and logic
-│   ├── hooks/         # Custom React hooks
-│   ├── lib/           # Utility functions and configurations
-│   ├── pages/         # Application pages/routes
-│   ├── main.tsx       # Application entry point
-│   └── router.tsx     # Route definitions
-├── public/            # Static assets
-└── package.json       # Project dependencies and scripts
-```
+- `src/features/posts` contains page components, UI, hooks, and a query‑options factory for cohesion and testability.
+- `src/components/providers` hosts app‑level providers (auth, theme).
+- `src/lib` centralizes cross‑cutting concerns like the API client, React Query client, and router.
+- API base URL comes from `VITE_API_URL` with a sensible default (`http://localhost:3000/api`).
 
-## 📜 Available Scripts
+### Caveats
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-- `npm run server` - Start JSON server (for development)
-
-## 🛠️ Tech Stack
-
-- [React](https://react.dev/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Vite](https://vitejs.dev/)
-- [TanStack Query](https://tanstack.com/query/latest)
-- [Shadcn UI](https://ui.shadcn.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [React Router](https://reactrouter.com/)
-- [React Hook Form](https://react-hook-form.com/)
-- [Zod](https://zod.dev/)
-- [Radix UI](https://www.radix-ui.com/)
-- [Lucide Icons](https://lucide.dev/)
-
-## 🎨 Customization
-
-### Theme
-
-The project uses Tailwind CSS for styling. You can customize the theme in the `tailwind.config.js` file.
-
-### Components
-
-Shadcn UI components can be customized in the `components.json` file and in individual component files.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+- The “current user” is a simple stub from the dev API (`/api/me`), used to gate actions like deleting your own post.
+- The server is in‑memory; data resets on restart. That is intentional—the assignment emphasizes client behavior and UX.
