@@ -24,7 +24,12 @@ const addPostFormSchema = z.object({
 
 type AddPostFormValues = z.infer<typeof addPostFormSchema>;
 
-export const AddPostForm = () => {
+type AddPostFormProps = {
+  onSuccess?: () => void;
+  onCancel?: () => void;
+};
+
+export const AddPostForm = ({ onSuccess, onCancel }: AddPostFormProps) => {
   const addPost = useAddPost();
   const form = useForm<AddPostFormValues>({
     resolver: zodResolver(addPostFormSchema),
@@ -43,6 +48,7 @@ export const AddPostForm = () => {
           console.log("AddPostForm success:", data);
           form.reset();
           toast.success("Post added successfully");
+          onSuccess?.();
         },
         onError: () => {
           toast.error("Failed to add post");
@@ -95,10 +101,18 @@ export const AddPostForm = () => {
 
         <div className="flex justify-end gap-2">
           <Button
+            type="button"
+            variant="outline"
+            onClick={() => onCancel?.()}
+            disabled={addPost.isPending}
+          >
+            Cancel
+          </Button>
+          <Button
             type="submit"
             disabled={addPost.isPending}
           >
-            {addPost.isPending ? "Submitting..." : "Submit"}
+            {addPost.isPending ? "Submitting..." : "Create post"}
           </Button>
         </div>
       </form>

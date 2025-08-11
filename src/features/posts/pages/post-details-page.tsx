@@ -63,7 +63,7 @@ export const PostDetailsPage = () => {
       {isLoadingPost ? (
         <PostSkeletonCard />
       ) : post ? (
-        <>
+        <Card>
           <CardHeader>
             <CardTitle className="text-xl sm:text-2xl">{post.title}</CardTitle>
             <CardDescription>Posted by User #{post.userId}</CardDescription>
@@ -76,7 +76,7 @@ export const PostDetailsPage = () => {
           <CardFooter className="text-xs text-muted-foreground">
             Post ID: {post.id}
           </CardFooter>
-        </>
+        </Card>
       ) : null}
 
       <PostCommentsSection postId={id} />

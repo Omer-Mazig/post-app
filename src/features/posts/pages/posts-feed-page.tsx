@@ -9,10 +9,19 @@ import { useSearchParams } from "react-router-dom";
 import { PostsFilter } from "../components/posts-filter";
 import { postsQueryOptionsFactory } from "../posts-query-options-factory";
 import { AddPostForm } from "../components/add-post-form";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export const PostsFeedPage = () => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("q") ?? "";
+  const [isAddPostOpen, setIsAddPostOpen] = React.useState(false);
   const {
     data,
     fetchNextPage,
@@ -59,8 +68,27 @@ export const PostsFeedPage = () => {
 
   return (
     <div className="space-y-4">
-      <AddPostForm />
-      <PostsFilter />
+      <div className="flex items-center justify-between gap-2">
+        <PostsFilter />
+        <Button onClick={() => setIsAddPostOpen(true)}>New Post</Button>
+      </div>
+      <Dialog
+        open={isAddPostOpen}
+        onOpenChange={setIsAddPostOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add new post</DialogTitle>
+            <DialogDescription>
+              Share your thoughts with the community.
+            </DialogDescription>
+          </DialogHeader>
+          <AddPostForm
+            onSuccess={() => setIsAddPostOpen(false)}
+            onCancel={() => setIsAddPostOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
       <PostsList
         posts={flatPosts}
         onReachEnd={() => {
