@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useAddPost } from "../hooks/use-add-post";
+import { toast } from "sonner";
 
 const addPostFormSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters."),
@@ -41,12 +42,14 @@ export const AddPostForm = () => {
         onSuccess: (data) => {
           console.log("AddPostForm success:", data);
           form.reset();
+          toast.success("Post added successfully");
+        },
+        onError: () => {
+          toast.error("Failed to add post");
         },
       }
     );
   }
-
-  const isSubmitting = form.formState.isSubmitting;
 
   return (
     <Form {...form}>
@@ -93,9 +96,9 @@ export const AddPostForm = () => {
         <div className="flex justify-end gap-2">
           <Button
             type="submit"
-            disabled={isSubmitting}
+            disabled={addPost.isPending}
           >
-            {isSubmitting ? "Submitting..." : "Submit"}
+            {addPost.isPending ? "Submitting..." : "Submit"}
           </Button>
         </div>
       </form>
