@@ -1,84 +1,75 @@
 import * as React from "react";
 
-export interface UseIntersectionObserverOptions {
-  root?: Element | null;
-  rootMargin?: string;
+type UseIntersectionObserverOptions = {
+  rootRef: React.RefObject<Element | null>;
+  targetRef: React.RefObject<Element | null>;
+  onIntersect?: () => void;
   threshold?: number | number[];
-  freezeOnceVisible?: boolean;
-  initialIsIntersecting?: boolean;
-}
+  rootMargin?: string;
+  enabled?: boolean;
+  deps?: React.DependencyList;
+};
 
-export interface UseIntersectionObserverReturn {
-  isIntersecting: boolean;
-  entry: IntersectionObserverEntry | undefined;
-}
-
+/**
+ * Observes `targetRef` within `rootRef` and calls `onIntersect` when visible.
+ */
 export function useIntersectionObserver(
-  elementRef: React.RefObject<Element | null>,
-  {
+  options: UseIntersectionObserverOptions
+) {
+  const {
+    rootRef,
+    targetRef,
+    onIntersect,
     threshold = 0,
-    root = null,
-    rootMargin = "0%",
-    freezeOnceVisible = false,
-    initialIsIntersecting = false,
-  }: UseIntersectionObserverOptions = {}
-): UseIntersectionObserverReturn {
-  const [entry, setEntry] = React.useState<
-    IntersectionObserverEntry | undefined
-  >();
-  const [isIntersecting, setIsIntersecting] = React.useState<boolean>(
-    initialIsIntersecting
-  );
+    rootMargin = "0px",
+    enabled = true,
+    deps = [],
+  } = options;
 
-  const frozen = React.useRef(false);
+  const observerRef = React.useRef<IntersectionObserver | null>(null);
 
   React.useEffect(() => {
-    const node = elementRef?.current; // DOM Ref
-    const hasIOSupport = !!window.IntersectionObserver;
+    if (!enabled) return;
 
-    if (!hasIOSupport || frozen.current || !node) return;
+    const rootElement = rootRef.current;
+    const targetElement = targetRef.current;
+
+    if (!rootElement || !targetElement || !onIntersect) return;
+
+    // Disconnect any previous observer before creating a new one
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+      observerRef.current = null;
+    }
 
     const observer = new IntersectionObserver(
-      ([entry]: IntersectionObserverEntry[]) => {
-        setEntry(entry);
-        setIsIntersecting(entry.isIntersecting);
-
-        if (entry.isIntersecting && freezeOnceVisible) {
-          frozen.current = true;
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          onIntersect();
         }
       },
-      { threshold, root, rootMargin }
+      {
+        root: rootElement as Element | Document | null,
+        threshold,
+        rootMargin,
+      }
     );
 
-    observer.observe(node);
+    observer.observe(targetElement);
+    observerRef.current = observer;
 
     return () => {
-      observer.disconnect();
+      if (observerRef.current) observerRef.current.disconnect();
+      observerRef.current = null;
     };
-  }, [elementRef, threshold, root, rootMargin, freezeOnceVisible]);
-
-  return {
-    isIntersecting,
-    entry,
-  };
-}
-
-// Hook variant with callback for side effects
-export function useIntersectionObserverCallback(
-  elementRef: React.RefObject<Element | null>,
-  callback: (entry: IntersectionObserverEntry, isIntersecting: boolean) => void,
-  options: UseIntersectionObserverOptions = {}
-): UseIntersectionObserverReturn {
-  const { isIntersecting, entry } = useIntersectionObserver(
-    elementRef,
-    options
-  );
-
-  React.useEffect(() => {
-    if (entry) {
-      callback(entry, isIntersecting);
-    }
-  }, [entry, isIntersecting, callback]);
-
-  return { isIntersecting, entry };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    rootRef,
+    targetRef,
+    onIntersect,
+    threshold,
+    rootMargin,
+    enabled,
+    ...deps,
+  ]);
 }

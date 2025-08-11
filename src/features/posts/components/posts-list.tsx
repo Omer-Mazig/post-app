@@ -2,6 +2,7 @@ import * as React from "react";
 import { type Post } from "../posts.types";
 import { PostPreview } from "./post-preview";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 
 type PostsListProps = {
   posts: Post[];
@@ -18,39 +19,15 @@ export const PostsList = ({
 }: PostsListProps) => {
   const viewportRef = React.useRef<HTMLDivElement | null>(null);
   const sentinelRef = React.useRef<HTMLDivElement | null>(null);
-  const observerRef = React.useRef<IntersectionObserver | null>(null);
-
-  React.useEffect(() => {
-    const rootEl = viewportRef.current;
-    const targetEl = sentinelRef.current;
-    if (!rootEl || !targetEl || !onReachEnd) return;
-
-    // Clean up any previous observer
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-      observerRef.current = null;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          onReachEnd();
-        }
-      },
-      {
-        root: rootEl,
-        threshold: 0,
-        rootMargin: "200px 0px 200px 0px",
-      }
-    );
-    observer.observe(targetEl);
-    observerRef.current = observer;
-
-    return () => {
-      if (observerRef.current) observerRef.current.disconnect();
-      observerRef.current = null;
-    };
-  }, [onReachEnd, posts.length]);
+  useIntersectionObserver({
+    rootRef: viewportRef,
+    targetRef: sentinelRef,
+    onIntersect: onReachEnd,
+    threshold: 0,
+    rootMargin: "200px 0px 200px 0px",
+    enabled: Boolean(onReachEnd),
+    deps: [posts.length],
+  });
 
   return (
     <ScrollArea

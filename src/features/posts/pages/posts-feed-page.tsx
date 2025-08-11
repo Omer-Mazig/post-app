@@ -3,7 +3,6 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { postsApi } from "../posts.api";
 import { PostsList } from "../components/posts-list";
 import { type Post } from "../posts.types";
-// Scroll and IO handled inside PostsList
 
 export const PostsFeedPage = () => {
   const {
@@ -17,7 +16,7 @@ export const PostsFeedPage = () => {
     queryKey: ["posts"],
     queryFn: ({ pageParam = 1 }) => postsApi.getPosts(pageParam),
     getNextPageParam: (lastPage, _pages, lastPageParam) =>
-      lastPage.items.length < 10 ? undefined : (lastPageParam as number) + 1,
+      lastPage.items.length < 10 ? undefined : lastPageParam + 1,
     initialPageParam: 1,
   });
 
