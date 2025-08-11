@@ -3,4 +3,9 @@ import { PostSchema } from "./posts.schemas";
 
 type Post = z.infer<typeof PostSchema>;
 
-export type { Post };
+type PostsPage = {
+  items: Post[];
+  nextCursor: number | undefined;
+};
+
+export type { Post, PostsPage };

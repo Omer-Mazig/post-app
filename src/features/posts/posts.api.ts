@@ -1,43 +1,26 @@
 import { apiClient } from "@/lib/api-client";
-import { PostSchema, PostsSchema } from "./posts.schemas";
-import { type Post } from "./posts.types";
+import { PostSchema, PostsPageSchema } from "./posts.schemas";
+import { type Post, type PostsPage } from "./posts.types";
 
 const postsApi = {
-  getPosts: async (
-    page: number,
-    searchQuery: string
-  ): Promise<{
-    items: Post[];
-    nextCursor: number | undefined;
-  }> => {
-    const limit = 10;
-
-    console.log("searchQuery", searchQuery);
+  getPosts: async (cursor: number, searchQuery: string): Promise<PostsPage> => {
+    const pageSize = 10;
 
     const urlParams = new URLSearchParams();
-    const start = (page - 1) * limit;
-    urlParams.set("_start", start.toString());
-    urlParams.set("_limit", limit.toString());
-    urlParams.set("_sort", "id"); // Sort by id in ascending order (just for the demo)
-    urlParams.set("_order", "asc");
+    urlParams.set("cursor", String(Math.max(0, cursor)));
+    urlParams.set("limit", String(pageSize));
 
-    // DO NOT CATCH ERRORS HERE
-    // Let Tanstack handle the error
-    const response = await apiClient.get(
-      `/posts?${urlParams.toString()}&q=${searchQuery}`
-    );
-    const parsed = PostsSchema.parse(response.data);
+    // Add search query if provided
+    if (searchQuery?.trim()) {
+      urlParams.set("q", searchQuery.trim());
+    }
 
-    const items: Post[] = parsed;
-    const hasMore = items.length === limit;
-    const nextCursor = hasMore ? page + 1 : undefined;
-
-    // Uncomment this to test the error state
-    // throw new Error("test");
+    const response = await apiClient.get(`/posts?${urlParams.toString()}`);
+    const parsed = PostsPageSchema.parse(response.data);
 
     return {
-      items,
-      nextCursor,
+      items: parsed.items,
+      nextCursor: parsed.nextCursor,
     };
   },
 

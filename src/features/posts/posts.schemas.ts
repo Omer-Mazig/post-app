@@ -9,4 +9,9 @@ const PostSchema = z.object({
 
 const PostsSchema = z.array(PostSchema);
 
-export { PostSchema, PostsSchema };
+const PostsPageSchema = z.object({
+  items: PostsSchema,
+  nextCursor: z.number().optional(),
+});
+
+export { PostSchema, PostsSchema, PostsPageSchema };
